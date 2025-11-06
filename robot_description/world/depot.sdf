@@ -31,9 +31,6 @@
       <pose>-4 7 0.8 1.5717 0 0</pose>
       <include>
         <uri>https://fuel.gazebosim.org/1.0/Hcl/models/April%20Tag%201</uri>
-        <model_state>
-          <scale>0.1 0.1 0.1</scale>
-        </model_state>
       </include>
     </model>
     <!-- <include>

@@ -114,7 +114,7 @@
       <geometry>
         <sphere radius="0.06"/>
       </geometry>
-      <material name="">
+      <material name="caster_wheel_fr">
         <color rgba="1.0 0.0 0.0 1.0"/>
       </material>
     </visual>
@@ -145,7 +145,7 @@
       <geometry>
         <sphere radius="0.06"/>
       </geometry>
-      <material name="">
+      <material name="caster_wheel_fl">
         <color rgba="1.0 0.0 0.0 1.0"/>
       </material>
     </visual>
@@ -176,7 +176,7 @@
       <geometry>
         <sphere radius="0.06"/>
       </geometry>
-      <material name="">
+      <material name="caster_wheel_br">
         <color rgba="1.0 0.0 0.0 1.0"/>
       </material>
     </visual>
@@ -207,7 +207,7 @@
       <geometry>
         <sphere radius="0.06"/>
       </geometry>
-      <material name="">
+      <material name="caster_wheel_bl">
         <color rgba="1.0 0.0 0.0 1.0"/>
       </material>
     </visual>
@@ -232,7 +232,7 @@
       <geometry>
         <mesh filename="package://robot_description/src/meshes/zed.STL" scale="0.001 0.001 0.001"/>
       </geometry>
-      <material name="Gray">
+      <material name="zed_camera_link_gray">
         <color rgba="0.5 0.5 0.5 1.0"/>
       </material>
     </visual>
@@ -296,7 +296,7 @@
       <geometry>
         <sphere radius="0.01"/>
       </geometry>
-      <material name="camera_frame">
+      <material name="camera_frame_right">
         <color rgba="0.0 0.0 1.0 1.0"/>
       </material>
     </visual> 
@@ -349,7 +349,7 @@
       <geometry>
         <cylinder radius="0.05" length="0.02"/>
       </geometry>
-      <material name="">
+      <material name="rplidar_c1">
         <color rgba="1.0 0.0 0.0 1.0"/>
       </material>
     </visual>
@@ -441,12 +441,6 @@
   </gazebo>
 
 <gazebo reference="zed_camera_link">
-  <plugin
-      filename="libignition-gazebo-sensors-system"
-      name="ignition::gazebo::systems::Sensors">
-      <render_engine>ogre2</render_engine>
-  </plugin>
-
   <!-- RGB Camera -->
   <sensor name="zed2i_rgb" type="camera">
     <always_on>true</always_on>
@@ -552,13 +546,6 @@
   </sensor>
 </gazebo>
 
-<gazebo>
-    <plugin
-      filename="libignition-gazebo-sensors-system"
-      name="ignition::gazebo::systems::Sensors">
-      <render_engine>ogre2</render_engine>
-    </plugin>
-</gazebo>
 <gazebo reference="rplidar_c1">
     <sensor type="gpu_lidar" name="rplidar_c1_sensor">
         <always_on>1</always_on>

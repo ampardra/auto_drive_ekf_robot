@@ -71,7 +71,7 @@ def generate_launch_description():
             "-y",
             "0",
             "-z",
-            "0.5",
+            "0.9",
         ],
         output="screen",
     )
@@ -107,8 +107,8 @@ def generate_launch_description():
         DeclareLaunchArgument('use_robot_state_pub',default_value='True',description='Whether to start the robot state publisher'),
         gz_resource_path,
         gz_sim,bridge,
-        spawn_entity,
         start_robot_state_publisher_cmd,
+        spawn_entity,
         rviz_node,
         frame_id_converter_node, 
         ekf_diff_imu_node,
