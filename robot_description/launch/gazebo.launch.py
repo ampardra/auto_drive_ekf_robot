@@ -11,8 +11,9 @@ from pathlib import Path
 def generate_launch_description():
     bringup_dir = get_package_share_directory('robot_description')
     world = os.path.join(bringup_dir , "world", "depot.sdf")
-    urdf_file  =  os.path.join(bringup_dir, 'src', 'description', 'test.urdf')
+    urdf_file  =  os.path.join(bringup_dir, 'src', 'description', 'robot.urdf')
     rviz_config_file = os.path.join(bringup_dir, 'config', 'gazebo.rviz')
+    vo_config_file = os.path.join(bringup_dir, 'config', 'rtabmap_slam.yaml')
 
     with open(urdf_file, 'r') as infp:
         robot_desc = infp.read()
@@ -99,6 +100,26 @@ def generate_launch_description():
         output='screen',
         parameters=[{'use_sim_time': True}]
     )
+    
+    rtabmap_vo_node = Node(
+        package="rtabmap_odom",
+        executable="rgbd_odometry",
+        name="rtabmap_visual_odometry",
+        output="screen",
+        parameters=[
+                    vo_config_file,
+                    {
+                        "use_sim_time": True, 
+                        "publish_tf": False
+                    }
+                ],
+        remappings=[
+            ("/rgb/image", "/zed/zed_node/left/image_rect_color"),
+            ("/depth/image", "/zed/zed_node/depth/depth_registered"),
+            ("/rgb/camera_info", "/zed/zed_node/left/camera_info"),
+            ("/odom", "/vo/odom")
+        ]
+    )
 
     return LaunchDescription([
         DeclareLaunchArgument('use_sim_time',default_value='True',description='Use sim time if true'),
@@ -111,4 +132,5 @@ def generate_launch_description():
         rviz_node,
         frame_id_converter_node, 
         ekf_diff_imu_node,
+        rtabmap_vo_node
     ])

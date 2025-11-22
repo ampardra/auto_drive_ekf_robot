@@ -114,7 +114,7 @@
       <geometry>
         <sphere radius="0.06"/>
       </geometry>
-      <material name="caster_wheel_fr">
+      <material name="">
         <color rgba="1.0 0.0 0.0 1.0"/>
       </material>
     </visual>
@@ -145,7 +145,7 @@
       <geometry>
         <sphere radius="0.06"/>
       </geometry>
-      <material name="caster_wheel_fl">
+      <material name="">
         <color rgba="1.0 0.0 0.0 1.0"/>
       </material>
     </visual>
@@ -176,7 +176,7 @@
       <geometry>
         <sphere radius="0.06"/>
       </geometry>
-      <material name="caster_wheel_br">
+      <material name="">
         <color rgba="1.0 0.0 0.0 1.0"/>
       </material>
     </visual>
@@ -207,7 +207,7 @@
       <geometry>
         <sphere radius="0.06"/>
       </geometry>
-      <material name="caster_wheel_bl">
+      <material name="">
         <color rgba="1.0 0.0 0.0 1.0"/>
       </material>
     </visual>
@@ -232,7 +232,7 @@
       <geometry>
         <mesh filename="package://robot_description/src/meshes/zed.STL" scale="0.001 0.001 0.001"/>
       </geometry>
-      <material name="zed_camera_link_gray">
+      <material name="Gray">
         <color rgba="0.5 0.5 0.5 1.0"/>
       </material>
     </visual>
@@ -296,7 +296,7 @@
       <geometry>
         <sphere radius="0.01"/>
       </geometry>
-      <material name="camera_frame_right">
+      <material name="camera_frame">
         <color rgba="0.0 0.0 1.0 1.0"/>
       </material>
     </visual> 
@@ -349,7 +349,7 @@
       <geometry>
         <cylinder radius="0.05" length="0.02"/>
       </geometry>
-      <material name="rplidar_c1">
+      <material name="">
         <color rgba="1.0 0.0 0.0 1.0"/>
       </material>
     </visual>
@@ -441,6 +441,12 @@
   </gazebo>
 
 <gazebo reference="zed_camera_link">
+  <plugin
+      filename="libignition-gazebo-sensors-system"
+      name="ignition::gazebo::systems::Sensors">
+      <render_engine>ogre2</render_engine>
+  </plugin>
+
   <!-- RGB Camera -->
   <sensor name="zed2i_rgb" type="camera">
     <always_on>true</always_on>
@@ -461,7 +467,7 @@
       <noise>
         <type>gaussian</type>
         <mean>0.0</mean>
-        <stddev>0.007</stddev>
+        <stddev>0.07</stddev>
       </noise>
 
       <!-- Camera info -->
@@ -499,7 +505,7 @@
       <noise>
         <type>gaussian</type>
         <mean>0.0</mean>
-        <stddev>0.007</stddev>
+        <stddev>0.07</stddev>
       </noise>
 
       <!-- Camera info -->
@@ -530,7 +536,7 @@
       <noise>
         <type>gaussian</type>
         <mean>0.0</mean>
-        <stddev>0.001</stddev>
+        <stddev>0.07</stddev>
       </noise>
       <!-- Depth camera info -->
       <camera_info>
@@ -545,7 +551,6 @@
     <optical_frame_id>zed_left_optical_frame</optical_frame_id>
   </sensor>
 </gazebo>
-
 <gazebo reference="rplidar_c1">
     <sensor type="gpu_lidar" name="rplidar_c1_sensor">
         <always_on>1</always_on>
