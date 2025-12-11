@@ -102,10 +102,8 @@ class EKFNode(Node):
         # P = F * P * F^T + Q
         self.P = F @ self.P @ F.T + self.Q
 
-        # Publish the "Predicted" state (Optional, but good for visualization smoothness)
-        # We usually publish only after correction, but if measurements are slow, 
-        # we can publish here too. For this assignment, let's wait for measurement or publish both.
-        # self.publish_ekf()
+
+        self.publish_ekf()
 
     def measurement_callback(self, msg: Odometry):
         """
