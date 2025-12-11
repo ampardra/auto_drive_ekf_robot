@@ -3,72 +3,89 @@ import rclpy
 from rclpy.node import Node
 from sensor_msgs.msg import Imu
 from nav_msgs.msg import Odometry
+from rclpy.qos import QoSProfile, ReliabilityPolicy
 
 class MeasurementNode(Node):
     def __init__(self):
         super().__init__("measurement_node")
         
-        # Parameters
-        self.declare_parameter("alpha", 0.5) # Weight for VO vs IMU
+        # 1. Parameters
+        self.declare_parameter("alpha", 0.5)
         self.declare_parameter("imu_topic", "/zed/zed_node/imu/data_raw")
         self.declare_parameter("vo_topic", "/vo/odom")
         
         self.alpha = self.get_parameter("alpha").value
-        imu_topic = self.get_parameter("imu_topic").value
-        vo_topic = self.get_parameter("vo_topic").value
+        imu_topic_name = self.get_parameter("imu_topic").value
+        vo_topic_name = self.get_parameter("vo_topic").value
 
-        # Subscribers
-        self.imu_sub = self.create_subscription(Imu, imu_topic, self.imu_cb, 10)
-        self.vo_sub = self.create_subscription(Odometry, vo_topic, self.vo_cb, 10)
+        # 2. QoS Policy: LISTEN TO EVERYTHING (Best Effort & Reliable)
+        qos_policy = QoSProfile(
+            reliability=ReliabilityPolicy.BEST_EFFORT,
+            depth=10
+        )
+
+        # 3. Subscribers
+        self.imu_sub = self.create_subscription(Imu, imu_topic_name, self.imu_cb, qos_policy)
+        self.vo_sub = self.create_subscription(Odometry, vo_topic_name, self.vo_cb, qos_policy)
         
-        # Publisher
+        # 4. Publisher
         self.pub = self.create_publisher(Odometry, "/measurement_model", 10)
         
-        # Storage
+        # 5. Storage
         self.last_imu = None
         self.last_vo = None
+        
+        self.get_logger().info(f"Measurement Node Started.")
+        self.get_logger().info(f"Waiting for IMU on: {imu_topic_name}")
+        self.get_logger().info(f"Waiting for VO on: {vo_topic_name}")
 
     def imu_cb(self, msg):
+        # Debug Log: Print once just to prove connection
+        if self.last_imu is None:
+            self.get_logger().info("First IMU message received!")
         self.last_imu = msg
         self.compute_and_publish()
 
     def vo_cb(self, msg):
+        # Debug Log: Print once just to prove connection
+        if self.last_vo is None:
+            self.get_logger().info("First VO message received!")
         self.last_vo = msg
         self.compute_and_publish()
 
     def compute_and_publish(self):
-        # We need both messages to compute the "combined" model
+        # Only publish if we have BOTH
         if self.last_imu is None or self.last_vo is None:
+            # Optional: Print warning periodically if one is missing?
             return
 
-        # Simple assignment logic: 
-        # Fusing Visual Odometry Position with IMU Orientation 
-        # (This is a basic model as per typical assignment requirements)
-        
+        # Create Output Message
         out = Odometry()
         out.header.stamp = self.get_clock().now().to_msg()
-        out.header.frame_id = "map"
+        out.header.frame_id = "odom" # Changed to 'odom' to be consistent with prediction
+        out.child_frame_id = "base_link"
         
-        # 1. Take Position from Visual Odometry
+        # 1. Position from Visual Odometry
         out.pose.pose.position = self.last_vo.pose.pose.position
         
-        # 2. Take Orientation from IMU (Usually more accurate for pitch/roll, sometimes yaw)
-        # OR: Take orientation from VO. 
-        # Since the assignment asks for "Combined formulas", let's use:
-        # Position = VO, Orientation = IMU
+        # 2. Orientation from IMU
         out.pose.pose.orientation = self.last_imu.orientation
         
-        # 3. Take Twist (Velocity) from VO
+        # 3. Twist from VO
         out.twist = self.last_vo.twist
 
         self.pub.publish(out)
+        
+        # Debug: Uncomment to see the stream
+        # self.get_logger().info(f"Published Measurement: x={out.pose.pose.position.x:.2f}")
 
 def main(args=None):
     rclpy.init(args=args)
     node = MeasurementNode()
-    rclpy.spin(node)
-    node.destroy_node()
-    rclpy.shutdown()
-
-if __name__ == "__main__":
-    main()
+    try:
+        rclpy.spin(node)
+    except KeyboardInterrupt:
+        pass
+    finally:
+        node.destroy_node()
+        rclpy.shutdown()
