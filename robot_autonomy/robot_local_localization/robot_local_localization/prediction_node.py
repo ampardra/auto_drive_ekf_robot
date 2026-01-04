@@ -16,7 +16,7 @@ class PredictionNode(Node):
         self.declare_parameter('wheel_radius', 0.1)
         self.declare_parameter('cmd_vel_topic', '/cmd_vel')
         self.declare_parameter('odom_topic', '/odom_pred')
-        self.declare_parameter('base_frame', 'base_link')
+        self.declare_parameter('base_frame', 'base_link_pred')
         self.declare_parameter('odom_frame', 'odom')
         self.declare_parameter('publish_tf', True)
         self.declare_parameter('update_rate', 50.0)

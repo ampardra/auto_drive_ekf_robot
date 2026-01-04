@@ -54,26 +54,22 @@ class MeasurementNode(Node):
         self.compute_and_publish()
 
     def compute_and_publish(self):
-        # Only publish if we have BOTH
         if self.last_imu is None or self.last_vo is None:
-            # Optional: Print warning periodically if one is missing?
             return
 
-        # Create Output Message
         out = Odometry()
         out.header.stamp = self.get_clock().now().to_msg()
-        out.header.frame_id = "odom" # Changed to 'odom' to be consistent with prediction
-        out.child_frame_id = "base_link"
+        out.header.frame_id = "odom"
+        out.child_frame_id = "base_link_measurement" # Unique frame!
         
-        # 1. Position from Visual Odometry
-        out.pose.pose.position = self.last_vo.pose.pose.position
+  
+        out.pose.pose.position.x = self.last_vo.pose.pose.position.x
+        out.pose.pose.position.y = self.last_vo.pose.pose.position.y
+        out.pose.pose.position.z = 0.0 
         
-        # 2. Orientation from IMU
+        # Use IMU for orientation
         out.pose.pose.orientation = self.last_imu.orientation
         
-        # 3. Twist from VO
-        out.twist = self.last_vo.twist
-
         self.pub.publish(out)
         
         # Debug: Uncomment to see the stream

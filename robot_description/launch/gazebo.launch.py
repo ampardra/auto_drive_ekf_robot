@@ -100,6 +100,18 @@ def generate_launch_description():
         output='screen',
         parameters=[{'use_sim_time': True}]
     )
+
+    cmd_vel_to_rpm_node = Node(
+        package='robot_description',
+        executable='cmd_vel_to_rpm_node',
+        name='cmd_vel_to_rpm',
+        output='screen',
+        parameters=[{
+            'wheel_radius': 0.1,
+            'wheel_separation': 0.45,
+            'use_sim_time': True
+        }]
+    )
     
     rtabmap_vo_node = Node(
         package="rtabmap_odom",
@@ -132,5 +144,6 @@ def generate_launch_description():
         rviz_node,
         frame_id_converter_node, 
         ekf_diff_imu_node,
+        cmd_vel_to_rpm_node,
         rtabmap_vo_node
     ])

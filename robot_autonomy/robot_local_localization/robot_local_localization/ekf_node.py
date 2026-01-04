@@ -59,50 +59,23 @@ class EKFNode(Node):
         self.get_logger().info("EKF Node Started")
 
     def prediction_callback(self, msg: Odometry):
-        """
-        Prediction Step (Time Update):
-        X_pred = Motion Model Output
-        P_pred = F * P * F.T + Q
-        """
         now = self.get_clock().now()
         dt = (now - self.last_time).nanoseconds / 1e9
         self.last_time = now
 
-        if self.first_run:
-            self.first_run = False
-            return
-        
-        # 1. Get Control Inputs from the message
         v = msg.twist.twist.linear.x
-        # We extract theta from the quaternion in the message
-        _, _, yaw_pred = self.quaternion_to_euler(msg.pose.pose.orientation)
+        omega = msg.twist.twist.angular.z
 
-        # 2. State Prediction
-        # Since prediction_node already integrated the physics, we can trust its X calculation 
-        # as our "A Priori" estimate.
-        # However, to be a true EKF, we usually propagate P based on the Jacobian F.
-        
-        theta = self.X[2, 0] # Previous theta
-        
-        # Update State Vector X based on the incoming prediction message
-        self.X[0, 0] = msg.pose.pose.position.x
-        self.X[1, 0] = msg.pose.pose.position.y
-        self.X[2, 0] = yaw_pred
+        theta = self.X[2, 0]
+        self.X[0, 0] += v * math.cos(theta) * dt
+        self.X[1, 0] += v * math.sin(theta) * dt
+        self.X[2, 0] += omega * dt
 
-        # 3. Jacobian F (Linearized Motion Model)
-        # F = [[1, 0, -v*sin(th)*dt],
-        #      [0, 1,  v*cos(th)*dt],
-        #      [0, 0,  1           ]]
-        
         F = np.eye(3)
         F[0, 2] = -v * math.sin(theta) * dt
         F[1, 2] = v * math.cos(theta) * dt
-        
-        # 4. Predict Covariance
-        # P = F * P * F^T + Q
+
         self.P = F @ self.P @ F.T + self.Q
-
-
         self.publish_ekf()
 
     def measurement_callback(self, msg: Odometry):
@@ -159,9 +132,6 @@ class EKFNode(Node):
         
         q = self.euler_to_quaternion(0, 0, float(self.X[2, 0]))
         msg.pose.pose.orientation = q
-
-        # Optional: Fill covariance in msg
-        # msg.pose.covariance[0] = self.P[0,0] ...
 
         self.ekf_pub.publish(msg)
 

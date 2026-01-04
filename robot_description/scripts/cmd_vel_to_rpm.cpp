@@ -28,8 +28,8 @@ private:
         double wl = (v - w * L_ / 2.0) / r_;
         double wr = (v + w * L_ / 2.0) / r_;
 
-        double rpm_l = wl * 60.0 / (2.0 * M_PI);
-        double rpm_r = wr * 60.0 / (2.0 * M_PI);
+        double rpm_l = wl;
+        double rpm_r = wr;
 
         std_msgs::msg::Float64 left_msg;
         std_msgs::msg::Float64 right_msg;
