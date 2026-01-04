@@ -144,26 +144,26 @@ The EKF trajectory should remain **closest to ground truth**.
 
 ```
 
-mkdir \-p \~/ros2\_ws/src
+mkdir -p ~/ros2_ws/src
 
-cd \~/ros2\_ws/src
+cd ~/ros2_ws/src
 
-git clone \<your-repo-url\>
+git clone https://github.com/ampardra/auto_drive_ekf_robot.git
 
 cd ..
 
-colcon build
+colcon build 
 
 source install/setup.bash
 ```
+or zsh based on your shell.
 
-  
 
 2.  **Launch Simulation:**
 
 ```
 
-ros2 launch robot\_description gazebo.launch.py
+ros2 launch robot_description gazebo.launch.py
 ```
   
 
@@ -171,10 +171,10 @@ ros2 launch robot\_description gazebo.launch.py
 
 ```
 
-ros2 launch robot\_local\_localization local\_localization.launch.py
+ros2 launch robot_local_localization local_localization.launch.py
 ```
   
 
 4.  **Visualize:**
 
-Open RViz and add Path displays for /path/ekf, /path/ground\_truth, and /path/prediction.
+Open RViz and add Path displays for /path/ekf, /path/ground_truth, and /path/prediction.
